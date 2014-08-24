@@ -20,6 +20,7 @@ The steps in transforming the data are outlined as follows:
 2. Extracts only the measurements on the mean and standard deviation for each measurement. The new name of the merged dataset with the mean and standard deviation info is tidy_data_mean_std in the run_analysis.R script file.
 
 3. Uses descriptive activity names to name the activities in the data set.  The descriptive activity names come from the ActivityID column in the tidy_data_mean_std.  The names are 
+
 * STANDING
 * SITTING
 * LAYING 
@@ -28,12 +29,14 @@ The steps in transforming the data are outlined as follows:
 * WALKING_UPSTAIRS
 
 4. Appropriately labels the data set with descriptive variable names. The variable names were changed using the gsub() function with regular expressions to remove parentheses and dashes.  The variable names use lowerCamelCase with a mix of underscores.  For example, each variable name begins with either a "t" for time domain, or "f" for frequency domain.  The next part of the variable name, for example "BodyAcc" describes "Body Acceleration" which is then seperated from the Mean or Standard Deviation and X, Y, or Z coordinate by "_Mean_X".  A few examples of variable names are
+
 * tGravityAcc_Std_Y
 * tGravityAcc_Std_Z
 * tBodyAccJerk_Mean_X
 * fBodyAccMag_Std
 * fBodyAccMag_MeanFreq
 * fBodyBodyAccJerkMag_Mean
+
 There are 79 variable names in this Mean and Standard Deviation data set.
 
 
