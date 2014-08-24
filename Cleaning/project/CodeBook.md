@@ -12,7 +12,7 @@ A description of the data can be found
 * <http://web.archive.org/web/20140803224107/http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones>
 
 
-# Transformations
+# TRANSFORMATIONS
 The steps in transforming the data are outlined as follows:
 
 1. Merges the training and the test sets to create one data set.  The merged data set is called tidy_data in the run_analysis.R script file.
@@ -25,6 +25,7 @@ The steps in transforming the data are outlined as follows:
 
 5. Creates a second, independent tidy data set named sensorAggregatesMean.txt with the average of each variable for each activity and each subject.  This .txt file can be found in the repo.
 
+# VARIABLES
 The descriptive activity names come from the ActivityID column in the tidy_data_mean_std.  The names are 
 
 * STANDING
