@@ -75,6 +75,20 @@ for (label in activity_labels$V2) {
 
 
 # Now rename variables to look nice and clean with good names
+# regex [()-] deletes () and -
+names(tidy_data_mean_std) <- gsub('[()-]', '', names(tidy_data_mean_std))
+names(tidy_data_mean_std) <- gsub('mean', '_Mean', names(tidy_data_mean_std))
+names(tidy_data_mean_std) <- gsub('std', '_Std', names(tidy_data_mean_std))
+names(tidy_data_mean_std) <- gsub('X', '_X', names(tidy_data_mean_std))
+names(tidy_data_mean_std) <- gsub('Y', '_Y', names(tidy_data_mean_std))
+names(tidy_data_mean_std) <- gsub('Z', '_Z', names(tidy_data_mean_std))
 
+
+# write another dataset with averages for each variable, activity, and subject
+clean2 <- aggregate(tidy_data_mean_std[,3:ncol(tidy_data_mean_std)], 
+                   by = list(Subject = tidy_data_mean_std[,1],
+                             Activity = tidy_data_mean_std[,2]), mean)
+
+write.table(clean2, file="sensorAggregatesMean.txt", sep="\t", row.names=FALSE)
 
 
