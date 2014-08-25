@@ -11,6 +11,42 @@ The original description of the data can be found at:
 
 * <http://web.archive.org/web/20140803224107/http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones>
 
+When the file linked to above is unzipped in the directory you wish to work in, the entire data set is contained in a directory named **UCI HAR Dataset**.  The directory structure is as follows where the bold font file names indicate the files that were used in cleaning the dataset:
+
+.
++-- README.txt
++-- **activity_labels.txt**
++-- **features.txt**
++-- features_info.txt
++-- sensorAggregation.txt 	**NOTE: not included in original dataset - result of cleaning data**
++-- train
+|   +-- Inertial Signals
+|		+-- body_acc_x_train.txt
+|		+-- body_acc_y_train.txt
+|		+-- body_acc_z_train.txt
+|		+-- body_gyro_x_train.txt
+|		+-- body_gyro_y_train.txt
+|		+-- body_gyro_z_train.txt
+|		+-- total_acc_x_train.txt
+|		+-- total_acc_y_train.txt
+|		+-- total_acc_z_train.txt
+|   +-- **subject_train.txt**
+|	+-- **X_train.txt**
+|	+-- **y_train.txt**
++-- test
+|   +-- Inertial Signals
+|		+-- body_acc_x_train.txt
+|		+-- body_acc_y_train.txt
+|		+-- body_acc_z_train.txt
+|		+-- body_gyro_x_train.txt
+|		+-- body_gyro_y_train.txt
+|		+-- body_gyro_z_train.txt
+|		+-- total_acc_x_train.txt
+|		+-- total_acc_y_train.txt
+|		+-- total_acc_z_train.txt
+|   +-- **subject_train.txt**
+|	+-- **X_train.txt**
+|	+-- **y_train.txt**
 
 # TRANSFORMATIONS
 The steps in transforming the data are outlined as follows:
@@ -49,36 +85,36 @@ The variable names (from step **4** under **TRANSFORMATIONS**) were changed usin
 * tBodyGyro_Std_[XYZ] 		-- standard deviation of body angular speed, time domain
 * tBodyGyroJerk_Mean_[XYZ] 		-- mean body angular jerk, time domain
 * tBodyGyroJerk_Std_[XYZ] 		-- standard deviation of body angular jerk, time domain
-* tBodyAccMag_Mean 		-- 
-* tBodyAccMag_Std
-* tGravityAccMag_Mean
-* tGravityAccMag_Std
-* tBodyAccJerkMag_Mean
-* tBodyAccJerkMag_Std
-* tBodyGyroMag_Mean
-* tBodyGyroMag_Std
-* tBodyGyroJerkMag_Mean
-* tBodyGyroJerkMag_Std
-* fBodyAcc_Mean_[XYZ]
-* fBodyAcc_Std_[XYZ]
-* fBodyAcc_MeanFreq_[XYZ]
-* fBodyAccJerk_Mean_[XYZ]
-* fBodyAccJerk_Std_[XYZ]
-* fBodyAccJerk_MeanFreq_[XYZ]
-* fBodyGyro_Mean_[XYZ]
-* fBodyGyro_Std_[XYZ]
-* fBodyGyro_MeanFreq_[XYZ]
-* fBodyAccMag_Mean
-* fBodyAccMag_Std
-* fBodyAccMag_MeanFreq
-* fBodyBodyAccJerkMag_Mean
-* fBodyBodyAccJerkMag_Std
-* fBodyBodyAccJerkMag_MeanFreq
-* fBodyBodyGyroMag_Mean
-* fBodyBodyGyroMag_Std
-* fBodyBodyGyroMag_MeanFreq
-* fBodyBodyGyroJerkMag_Mean
-* fBodyBodyGyroJerkMag_Std
-* fBodyBodyGyroJerkMag_MeanFreq
+* tBodyAccMag_Mean 		-- mean magnitude of body acceleration, time domain
+* tBodyAccMag_Std 	-- standard deviation of magnitude of body acceleration, time domain
+* tGravityAccMag_Mean 		-- mean magnitude of gravitational acceleration, time domain
+* tGravityAccMag_Std 	-- standard deviation of gravitational acceleration, time domain
+* tBodyAccJerkMag_Mean 		-- mean magnitude of body jerk, time domain
+* tBodyAccJerkMag_Std 		-- standard deviation of magnitude of body jerk, time domain
+* tBodyGyroMag_Mean 		-- mean magnitude of body angular speed, time domain
+* tBodyGyroMag_Std 		-- standard deviation of magnitude of body angular speed, time domain
+* tBodyGyroJerkMag_Mean 		-- mean magnitude of body angular jerk, time domain
+* tBodyGyroJerkMag_Std 		-- standard deviation of magnitude of body anfular jerk, time domain
+* fBodyAcc_Mean_[XYZ] 		-- mean body acceleration, frequency domain
+* fBodyAcc_Std_[XYZ] 	-- standard deviation of body acceleration, frequency domain
+* fBodyAcc_MeanFreq_[XYZ] 	-- mean frequency of body acceleration, frequency domain
+* fBodyAccJerk_Mean_[XYZ] 	-- mean body jerk, frequency domain
+* fBodyAccJerk_Std_[XYZ] 	-- standard deviation of body jerk, frequency domain
+* fBodyAccJerk_MeanFreq_[XYZ] 	-- mean frequency of body jerk, frequency domain
+* fBodyGyro_Mean_[XYZ] 		-- mean body angular speed, frequency domain
+* fBodyGyro_Std_[XYZ] 		-- standard deviation of body angular speed, frequency domain
+* fBodyGyro_MeanFreq_[XYZ] 		-- mean frequency of body angular speed, frequency domain
+* fBodyAccMag_Mean 		-- mean magnitude of body acceleration, frequency domain
+* fBodyAccMag_Std 		-- standard deviation of magnitude of body acceleration, frequency domain
+* fBodyAccMag_MeanFreq 	-- mean frequency of magnitude of body acceleration, frequency domain
+* fBodyBodyAccJerkMag_Mean 	-- mean magnitude of body jerk, frequency domain
+* fBodyBodyAccJerkMag_Std 	-- standard deviation of magnitude of body jerk, frequency domain
+* fBodyBodyAccJerkMag_MeanFreq 	-- mean frequency of magnitude of body jerk, frequency domain
+* fBodyBodyGyroMag_Mean 		-- mean magnitude of body angular speed, frequency domain
+* fBodyBodyGyroMag_Std 		-- standard deviation of magnitude of body angular speed, frequency domain
+* fBodyBodyGyroMag_MeanFreq 		-- mean frequency of magnitude of body angular speed, frequency domain
+* fBodyBodyGyroJerkMag_Mean 		-- mean magnitude of body angular jerk, frequency domain
+* fBodyBodyGyroJerkMag_Std 		-- standard deviation of magnitude of body anfular jerk, frequency domain
+* fBodyBodyGyroJerkMag_MeanFreq 		-- mean frequency of magnitude of body angular jerk, frequency domain
 
-There are 79 variable names in this Mean and Standard Deviation data set.
+Overall, there are 79 feature variable names in this Mean and Standard Deviation data set.  There are 30 participants and 6 activities being recorded through inertial sensors.
