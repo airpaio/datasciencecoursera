@@ -11,12 +11,12 @@ The original description of the data can be found at:
 
 * <http://web.archive.org/web/20140803224107/http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones>
 
-When the file linked to above is unzipped in the directory you wish to work in, the entire data set is contained in a directory named **UCI HAR Dataset**.  The directory structure is as follows where the bold font file names indicate the files that were used in cleaning the dataset:
+When the file linked to above is unzipped in the directory you wish to work in, the entire data set is contained in a directory named **UCI HAR Dataset**.  The directory structure is as follows:
 
 <pre>.
 +-- README.txt
-+-- **activity_labels.txt**
-+-- **features.txt**
++-- activity_labels.txt
++-- features.txt
 +-- features_info.txt
 +-- sensorAggregation.txt 	**NOTE: not included in original dataset - result of cleaning data**
 +-- train
@@ -30,9 +30,9 @@ When the file linked to above is unzipped in the directory you wish to work in, 
 |		+-- total_acc_x_train.txt
 |		+-- total_acc_y_train.txt
 |		+-- total_acc_z_train.txt
-|   +-- **subject_train.txt**
-|	+-- **X_train.txt**
-|	+-- **y_train.txt**
+|   +-- subject_train.txt
+|	+-- X_train.txt
+|	+-- y_train.txt
 +-- test
 |   +-- Inertial Signals
 |		+-- body_acc_x_train.txt
@@ -44,15 +44,27 @@ When the file linked to above is unzipped in the directory you wish to work in, 
 |		+-- total_acc_x_train.txt
 |		+-- total_acc_y_train.txt
 |		+-- total_acc_z_train.txt
-|   +-- **subject_train.txt**
-|	+-- **X_train.txt**
-|	+-- **y_train.txt**
+|   +-- subject_train.txt
+|	+-- X_train.txt
+|	+-- y_train.txt
 </pre>
+
+The files used during the cleaning of the dataset were:
+
+* activity_labels.txt
+* features.txt
+* subject_train.txt
+* X_train.txt
+* y_train.txt
+* subject_test.txt
+* X_test.txt
+* y_test.txt
+
 
 # TRANSFORMATIONS
 The steps in transforming the data are outlined as follows:
 
-1. Merges the training and the test sets to create one data set.  The merged data set is called **tidy_data** in the **run_analysis.R** script file.
+1. Merges the training and the test sets to create one data set.  The merged data set is called **tidy_data** in the **run_analysis.R** script file.  Merging the **tidy_data** included merging data from the following files: **subject_train.txt**, **X_train.txt**, **y_train.txt**, **subject_test.txt**, **X_test.txt**, **y_test.txt**.
 
 2. Extracts only the measurements on the mean and standard deviation for each measurement. The new name of the merged dataset with the mean and standard deviation info is **tidy_data_mean_std** in the **run_analysis.R** script file.
 
@@ -63,7 +75,7 @@ The steps in transforming the data are outlined as follows:
 5. Creates a second, independent tidy data set named **sensorAggregatesMean.txt** with the average of each variable for each activity and each subject.  This .txt file can be found in the repo.
 
 # VARIABLES
-The descriptive activity names (from step **3** under **TRANSFORMATIONS**) come from the **ActivityID** column in the **tidy_data_mean_std**.  The names are 
+The descriptive activity names (from step **3** under **TRANSFORMATIONS**, **activity_labels.txt**) come from the **ActivityID** column in the **tidy_data_mean_std**.  The names are 
 
 * STANDING
 * SITTING
@@ -72,7 +84,7 @@ The descriptive activity names (from step **3** under **TRANSFORMATIONS**) come 
 * WALKING_DOWNSTAIRS
 * WALKING_UPSTAIRS
 
-The variable names (from step **4** under **TRANSFORMATIONS**) were changed using the gsub() function with regular expressions to remove parentheses and dashes.  The variable names use lowerCamelCase with a mix of underscores.  For example, each variable name begins with either a "t" for time domain, or "f" for frequency domain.  The next part of the variable name represents which inertial sensor the data is taken from, for example "BodyAcc" describes the "Body Acceleration" sensor.  The sensor name is is then seperated from the names Mean or Standard Deviation and X, Y, or Z coordinate by underscores.  The names "Mean" and "Std" speak for themselves, whereas the coordinates X, Y, or Z, represent the respective 3-D coordinates of the inertial sensors.  The variable names in the final cleaned up dataset **sensorAggregatesMean.txt** are the following:
+The variable names (from step **4** under **TRANSFORMATIONS**) were changed using the gsub() function with regular expressions to remove parentheses and dashes.  The variable names use lowerCamelCase with a mix of underscores.  For example, each variable name begins with either a "t" for time domain, or "f" for frequency domain.  The next part of the variable name represents which inertial sensor the data is taken from, for example "BodyAcc" describes the "Body Acceleration" sensor.  The sensor name is is then seperated from the names Mean or Standard Deviation and X, Y, or Z coordinate by underscores.  The names "Mean" and "Std" speak for themselves, whereas the coordinates X, Y, or Z, represent the respective 3-D coordinates of the inertial sensors.  The variable names (a subset of **features.txt**) in the final cleaned up dataset **sensorAggregatesMean.txt** are the following:
 
 * SubjectID		-- a unique identifier for each subject that participated in the data measurements
 * ActivityID		-- a unique name for each activity involved (see first list under **VARIABLES**)
