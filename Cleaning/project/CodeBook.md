@@ -13,6 +13,7 @@ The original description of the data can be found at:
 
 When the file linked to above is unzipped in the directory you wish to work in, the entire data set is contained in a directory named **UCI HAR Dataset**.  The directory structure is as follows where the bold font file names indicate the files that were used in cleaning the dataset:
 
+'''
 .
 +-- README.txt
 +-- **activity_labels.txt**
@@ -47,6 +48,7 @@ When the file linked to above is unzipped in the directory you wish to work in, 
 |   +-- **subject_train.txt**
 |	+-- **X_train.txt**
 |	+-- **y_train.txt**
+'''
 
 # TRANSFORMATIONS
 The steps in transforming the data are outlined as follows:
