@@ -1,8 +1,8 @@
 ### README.md
 
 This repo contains the following files:
-* README.md
-* CodeBook.md 
+* **README.md**
+* **CodeBook.md** 
 a document which explains all of the transformations, variables, etc. that are dealt with throughout the process of cleaning the dataset.
 * **run_analysis.R**
 which transforms and cleans the dataset linked to from the course website represent data collected from the accelerometers from the Samsung Galaxy S smartphone.
