@@ -1,0 +1,226 @@
+---
+title: "Using Machine Learning to Predict Human Exercise Activities"
+author: "Cory Robinson"
+date: "October 26, 2014"
+output: html_document
+---
+
+## Abstract
+In this paper our goal is to predict which exercise activity that a human 
+subject is performing by running a machine learning method on data collected
+from accelerometers on the belt, forearm, and dumbell.  Data was collected on
+six participants which were asked to perform barbell lifts both correctly and 
+incorectly in five different ways.  More information on the data can be found
+on this website <http://groupware.les.inf.puc-rio.br/har>.  
+
+## The Data
+The data from the website above can be downloaded into a pre-partitioned 
+training set and testing set through the links below:
+
+* Training -- <https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv>
+
+* Testing -- <https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv>
+
+Note that the **Testing** set above is missing the **classe** variable which is 
+what we want to predict.  This set will be tested when we run our machine
+learning algorithm on a mystery **classe** set of values.
+
+Running the following code snippet will take care of downloading the data onto 
+your computer and reading it into R.  Note to cater to your own development and
+analysis environment, you may want to change the directory that this snippet 
+sends your data to.
+
+```{r, echo=TRUE}
+# download the data
+setwd("~/Coursera/ML_JHU/Project")
+urlTrain <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
+urlTest <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
+filenameTrain <- "pml_training.csv"
+filenameTest <- "pml_testing.csv"
+pathTrain <- paste(getwd(), "data", filenameTrain, sep="/")
+pathTest <- paste(getwd(), "data", filenameTest, sep="/")
+
+if (!(filenameTrain %in% dir(paste(getwd(), "data", sep="/")))) {
+    # download file
+    print("downloading training data file...")
+    dLoadTrain <- download.file(urlTrain, pathTrain, method="curl", cacheOK=TRUE)
+}
+
+if (!(filenameTest %in% dir(paste(getwd(), "data", sep="/")))) {
+    # download testing data file
+    print("downloading testing data file...")
+    dLoadTest <- download.file(urlTest, pathTest, method="curl", cacheOK=TRUE)
+}
+
+pmlTraining <- "pml_training.csv"
+pmlTesting <- "pml_testing.csv"
+
+# now load data into dataframe
+training <- read.csv(paste("data", pmlTraining, sep="/"))
+testing <- read.csv(paste("data", pmlTesting, sep="/"))
+```
+
+## Pre-Processing
+If you run `head(training)` you will see that there are several NA's in the 
+data set.  Running `colSums(is.na(training))` shows the number of NA values in
+each column.  This shows us that all of the columns have either 0 or 19216 NA
+values.  `dim(training)` reveals that there are 19622 rows and 160 
+columns/variables in the training set.  Of the variables that have NA values, 
+nearly all of the observations in thos variables are missing, so we will start
+by removing those variables from the traing set by running the following command
+```{r, echo=TRUE}
+cleanTrain <- training[, colSums(is.na(training)) == 0]
+```
+
+Looking at `str(cleanTrain)` we can see several factor variables that may not 
+serve as good predictors i.e., many have #DIV/0! values, or there may simply 
+be factors with many many levels and not much data in each of the levels.  
+Many of the factors describe kurtosis and skewness which are probably not as 
+meaningful as the numerical values of say roll, pitch, yaw, gyros, and 
+accelerations, etc.  We will remove all of the factor variables except for 
+**classe** which is the variable we're interested in predicting.
+```{r, echo=TRUE}
+cleanTrain <- cbind(cleanTrain[, sapply(cleanTrain, is.numeric)],
+                    classe = cleanTrain$classe)
+```
+
+Now that we have removed the appropriate factor variables, we can see that 
+there are still 4 variables that dont seem useful as predictors, namely the
+first four variables, which are just descriptive of the subject performing
+the activity and the timing of the activity.  We are not interested in these 
+descriptors and so we remove them now.
+```{r, echo=TRUE}
+rmNames <- names(cleanTrain[, 1:4])
+rmNames
+cleanTrain <- cleanTrain[, !(colnames(cleanTrain) %in% rmNames)]
+```
+
+We are finished cleaning up the training data and note that `dim(cleanTrain)' 
+shows that we are down to 53 columns, that is 52 predictor variables to predict 
+the **classe** variable.  Now we must ensure that we are using the same 
+variables in the testing set as we are in the training set to ensure 
+consistency.  We do this as follows:
+```{r, echo=TRUE}
+cleanTest <- testing[, colnames(testing) %in% colnames(cleanTrain)]
+```
+
+## Model Building
+### Timing Issues
+I want to run a **Random Forest** training algorithm on my data, but first let
+me discuss timing issues that I have encountered.
+
+I first naively used the `caret` package and the `train` function with the 
+`rf` method without any controlling parameters, and this was taking very long
+to run.  Letting my script run for nearly an hour had still not produced any
+results.
+
+We currently have 52 predictor variables, and in [this](http://groupware.les.inf.puc-rio.br/public/papers/2013.Velloso.QAR-WLE.pdf) that the **Best-First** search algorithm 
+could be used to cut down the number of predictor variables even more by 
+selecting only the best variables to use as predictors.  In R,
+the package `FSelector` contains a function `best.first.search` which I tried 
+to use, but unfortunately this was taking an extremely long time to run on my 
+machine, so for now we just resort to using the 52 predictor variables we
+currently have.
+
+At this time, I reverted back to use the `randomForest` function from the
+package `randomForest`.  Fortunately this only took a couple of minutes to run,
+but I wanted cross validated results which I hadn't yet implemented.  This 
+package has a function `rfcv` for cross validation, but once again this began 
+to take excruciatingly long to run.  
+
+I then tried to code up my own cross validation algorithm with `randomForest`
+and parallel processing using `foreach() %dopar%` with the `doMC` package. 
+But, the `%dopar%` for some reason wasn't working on my machine.
+
+At this time, I turned back to the `train` function from the `caret` package.
+Instead of using `method = 'rf'`, I used the parallel Random Forest method 
+`parRF`.  Along with some other tuning parameters, I was able to run a 10-fold
+cross validated Random Forest algorithm in about 13 to 15 minutes with 4 cores
+running on my machine.
+
+### Set Up
+Now, using the `caret` package, the following code snippet partitions our
+`cleanTrain` data into 70/30 partition of traing and testing data for cross
+validation purposes.
+```{r, echo=TRUE}
+library(caret)
+library(doMC)  # for parallel processing
+registerDoMC(cores = 4)  # for parallel processing
+set.seed(8025)
+
+inTrain <- createDataPartition(y = cleanTrain$classe, p = 0.7, list = FALSE)
+trainSet <- cleanTrain[inTrain,]
+testSet <- cleanTrain[-inTrain,]
+```
+
+We use the `trainControl` function to implement 10-fold cross validation and 
+also to turn on parallel processing.
+```{r, echo=TRUE}
+ctrl <- trainControl(method = "cv",
+                     number = 10,
+                     verboseIter=TRUE,
+                     allowParallel=TRUE)
+```
+
+Now we train our parallel Random Forest algorithm using the trainControl 
+parameters.  This takes nearly 15 minutes on my machine, and the timing is 
+output below.
+```{r, echo=TRUE}
+time <- system.time({modRf <- train(classe ~., data=trainSet,
+               method = "parRF",
+               trControl = ctrl)
+})
+
+time[3]/60  # time in minutes
+
+predTr <- predict(modRf, trainSet)  # for in-sample error
+predTs <- predict(modRf, testSet)   # for out-of-sample error
+```
+
+Now we get a confusion matrix of our results so that we can report on the 
+accuracy of our model and also the in/out-of sample error rates.
+```{r, echo=TRUE}
+confTr <- confusionMatrix(predTr, trainSet$classe) # reports in-sample accuracy
+confTs <- confusionMatrix(predTs, testSet$classe) # out-of-sample accuracy
+confTr
+confTs
+```
+Our in-sample accuracy is 100%, and our out-of sample accuracy is about 99.2%.
+This translates to an out-of-sample error rate of about .8%, which is very good.
+
+The following code snippet runs our model on the `testing` set that we first 
+downloaded, and results are output to a text file.
+```{r, echo=TRUE}
+pml_write_files = function(x){
+    n = length(x)
+    for(i in 1:n){
+        filename = paste0("problem_id_",i,".txt")
+        write.table(x[i], file=filename,
+                    quote=FALSE, row.names=FALSE,
+                    col.names=FALSE)
+    }
+}
+
+
+answers <- predict(modRf, cleanTest)
+answers <- as.character(answers)
+pml_write_files(answers)
+```
+
+## Conclusion
+In this case the Random Forest performed extremely well.  With more research
+into the problem we could have cut down on the number of predictor variables
+to use which would have resulted in faster runtimes, but at the cost of
+slightly less accuracy in the model.  However, the accuracy that we did achieve 
+here could be a result of overfitting, so it would be worthwhile to spend a
+little more time fine tuning the model.  For instance in 
+[this](http://groupware.les.inf.puc-rio.br/public/papers/2013.Velloso.QAR-WLE.pdf) 
+paper mentioned earlier, the authors report about 98.5% accuracy with only 17 
+predictor variables.  Overall, the Random Forest algorithm has performed so 
+well that I chose not to compare it to the performance of other methods at 
+this time.
+
+### References
+* Ugulino, W.; Cardador, D.; Vega, K.; Velloso, E.; Milidiu, R.; Fuks, H. Wearable Computing: Accelerometers' Data Classification of Body Postures and Movements. Proceedings of 21st Brazilian Symposium on Artificial Intelligence. Advances in Artificial Intelligence - SBIA 2012. In: Lecture Notes in Computer Science. , pp. 52-61. Curitiba, PR: Springer Berlin / Heidelberg, 2012. ISBN 978-3-642-34458-9. DOI: 10.1007/978-3-642-34459-6_6. 
+
+* Velloso, E.; Bulling, A; Gellersen, H.; Ugulino, W.; Fuks, H. Qualitatitative Actuvity Recognition of Weight Lifting Exercises, Proceedings of 4th International Conference in Cooperation with SIGCHI (Augmented Human '13). Stuttgart, Germany: ACM SIGCHI, 2013.
